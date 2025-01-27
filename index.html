@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TextReader AI</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-cyan-600 to-cyan-800 min-h-screen">
+    <div id="app" class="p-4 max-w-md mx-auto">
+        <!-- Header -->
+        <header class="text-white text-center mb-8 pt-4">
+            <h1 class="text-3xl font-bold mb-2">TextReader AI</h1>
+            <p class="opacity-90">Convert images & PDFs to human-like speech</p>
+        </header>
+
+        <!-- Main Content -->
+        <div class="glass-effect rounded-xl p-6 shadow-lg">
+            <!-- File Upload Section -->
+            <div class="mb-6">
+                <label class="block text-white text-sm mb-2">Upload File</label>
+                <div class="relative">
+                    <input type="file" 
+                           @change="handleFileUpload" 
+                           accept=".pdf,image/*" 
+                           class="hidden" 
+                           id="fileInput">
+                    <label for="fileInput" 
+                           class="bg-white hover:bg-gray-100 text-cyan-800 font-semibold py-2 px-4 rounded-lg w-full flex items-center justify-center cursor-pointer transition duration-300">
+                        <i class="bi bi-upload mr-2"></i>
+                        Choose PDF or Image
+                    </label>
+                </div>
+                <p v-if="selectedFile" class="text-white text-sm mt-2">
+                    Selected: {{selectedFile.name}}
+                </p>
+            </div>
+
+            <!-- Settings -->
+            <div class="mb-6">
+                <label class="block text-white text-sm mb-2">Reading Speed</label>
+                <div class="flex items-center">
+                    <i class="bi bi-volume-down text-white mr-2"></i>
+                    <input type="range" 
+                           v-model="readingSpeed" 
+                           min="0.5" 
+                           max="2" 
+                           step="0.1"
+                           class="w-full h-2 rounded-lg appearance-none cursor-pointer bg-white">
+                    <span class="text-white ml-2">{{readingSpeed}}x</span>
+                </div>
+            </div>
+
+            <!-- Voice Selection -->
+            <div class="mb-6">
+                <label class="block text-white text-sm mb-2">Voice Type</label>
+                <select v-model="selectedVoice" 
+                        class="w-full p-2 rounded-lg bg-white text-cyan-800">
+                    <option value="female">Female Voice</option>
+                    <option value="male">Male Voice</option>
+                </select>
+            </div>
+
+            <!-- Control Buttons -->
+            <div class="flex gap-3">
+                <button @click="startReading" 
+                        :disabled="!selectedFile"
+                        class="flex-1 bg-white hover:bg-gray-100 text-cyan-800 font-semibold py-2 px-4 rounded-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed transition duration-300">
+                    <i class="bi bi-play-fill mr-2"></i>
+                    Start Reading
+                </button>
+                <button @click="pauseReading" 
+                        class="flex-1 bg-white hover:bg-gray-100 text-cyan-800 font-semibold py-2 px-4 rounded-lg flex items-center justify-center transition duration-300">
+                    <i class="bi bi-pause-fill mr-2"></i>
+                    Pause
+                </button>
+            </div>
+        </div>
+
+        <!-- Status Card -->
+        <div v-if="isProcessing || isReading" 
+             class="glass-effect mt-4 p-4 rounded-xl">
+            <div v-if="isProcessing" class="flex items-center text-white">
+                <div class="animate-spin mr-2">
+                    <i class="bi bi-arrow-repeat"></i>
+                </div>
+                Processing your file...
+            </div>
+            <div v-if="isReading" class="text-white">
+                <i class="bi bi-soundwave mr-2"></i>
+                Reading in progress...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue
+
+        createApp({
+            data() {
+                return {
+                    selectedFile: null,
+                    readingSpeed: 1,
+                    selectedVoice: 'female',
+                    isProcessing: false,
+                    isReading: false
+                }
+            },
+            methods: {
+                handleFileUpload(event) {
+                    this.selectedFile = event.target.files[0]
+                },
+                startReading() {
+                    if(!this.selectedFile) return
+                    
+                    this.isProcessing = true
+                    // Simulate processing time
+                    setTimeout(() => {
+                        this.isProcessing = false
+                        this.isReading = true
+                        
+                        // Simulate reading time
+                        setTimeout(() => {
+                            this.isReading = false
+                            alert('Reading completed!')
+                        }, 3000)
+                    }, 2000)
+                },
+                pauseReading() {
+                    this.isReading = false
+                }
+            }
+        }).mount('#app')
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
